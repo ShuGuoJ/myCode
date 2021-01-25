@@ -1,6 +1,6 @@
 # The utils of deep learning
 ## Description
-The repository is used to store the basic code about deep learning and data preprocess during my undergraduate to reduce the developing time.
+The repository is used to store the basic code about deep learning and data preprocess during my postgraduate to reduce the developing time.
 ## Installation
 1.pytorch  
 2.numpy
