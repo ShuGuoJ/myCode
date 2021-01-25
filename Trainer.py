@@ -11,11 +11,12 @@ class Trainer(object):
         self.model = model
 
     # 训练过程
-    def train(self, data_loader: DataLoader, optimizer: optimizer_, criterion, device: torch.device):
+    def train(self, data_loader: DataLoader, optimizer: optimizer_, criterion, device: torch.device, monitor=None):
         self.model.train()
         self.model.to(device)
         criterion.to(device)
         losses = []
+        grads = []
         for step, (x, target) in enumerate(data_loader):
             x, target = x.to(device), target.to(device)
             logits = self.model(x)  # 前向传播
@@ -24,10 +25,17 @@ class Trainer(object):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            # 监控器
+            if monitor is not None:
+                grads.append(monitor())
             if (step+1) % 5 == 0:
                 print('batch:{} loss:{:.6f}'.format(step, loss.item()))
             losses.append(loss.item())
-        return np.mean(losses)
+        if len(grads) > 0:
+            grads_mean = np.mean(grads)
+        else:
+            grads_mean = None
+        return np.mean(losses), grads_mean
 
     # 验证过程
     def evaluate(self, data_loader: DataLoader, criterion, device: torch.device):
