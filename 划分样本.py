@@ -18,7 +18,7 @@ def train_test_split(gt: np.ndarray, size: int):
         if i != 0:
             indices = list(zip(*np.nonzero(gt == i)))
             samples = random.sample(indices, size)
-            indices = list(zip(*indices))
-            train_gt[indices] = gt[indices]
-            test_gt[indices] = 0
+            x = tuple(zip(*samples))
+            train_gt[x] = gt[x]
+            test_gt[x] = 0
     return train_gt, test_gt
