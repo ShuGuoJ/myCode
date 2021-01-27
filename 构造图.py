@@ -37,7 +37,7 @@ def get_edge_index(segment):
                 if source != target:
                     edge_index.add((source, target))
                     edge_index.add((target, source))
-    return torch.tensor(list(edge_index)).T, edge_index
+    return torch.tensor(list(edge_index), dtype=torch.long).T, edge_index
 
 
 # 获得节点
