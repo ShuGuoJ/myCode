@@ -6,8 +6,8 @@ import numpy as np
 
 
 def visualize(x, y):
-    x = x.numpy() if isinstance(x, torch.Tensor) else x
-    y = y.numpy() if isinstance(y, torch.Tensor) else y
+    x = x.cpu().numpy() if isinstance(x, torch.Tensor) else x
+    y = y.cpu().numpy() if isinstance(y, torch.Tensor) else y
     from sklearn.decomposition import PCA
     from matplotlib import pyplot as plt
     pca = PCA(2, whiten=True)
