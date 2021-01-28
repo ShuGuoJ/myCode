@@ -18,6 +18,8 @@ from torch_scatter import scatter
 
 # 获得节点之间的邻接关系
 def get_edge_index(segment):
+    if isinstance(segment, torch.Tensor):
+        segment = segment.numpy()
     # 扩张
     img = segment.astype(np.uint8)
     kernel = np.ones((3,3), np.uint8)
@@ -51,7 +53,7 @@ def get_node(x, segment, mode='mean'):
     x = x.reshape((-1, c))
     mask = segment.flatten()
     nodes = scatter(x, mask, dim=0, reduce=mode)
-    return nodes
+    return nodes.to(torch.float32)
 
 
 # x = np.arange(4).reshape((2,2,1))
