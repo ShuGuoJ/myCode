@@ -13,7 +13,7 @@ def visualize(x, y):
     pca = PCA(2, whiten=True)
     new_x = pca.fit_transform(x)
     for i in np.unique(y):
-        tmp = x[y == i]
+        tmp = new_x[y == i]
         c = plt.cm.Set1(i)
         plt.scatter(tmp[:, 0], tmp[:, 1], color=c, marker='*')
     plt.show()
