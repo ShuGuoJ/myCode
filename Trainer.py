@@ -47,7 +47,8 @@ class Trainer(object):
         for x, target in data_loader:
             x, target = x.to(device), target.to(device)
             logits = self.model(x)
-            loss = criterion(logits, target)
+            with torch.no_grad():
+                loss = criterion(logits, target)
             pred = logits.argmax(-1)
             correct += pred.eq(target).sum().item()
             losses.append(loss.item())
