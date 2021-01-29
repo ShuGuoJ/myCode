@@ -142,6 +142,11 @@ class ContrastiveLoss(nn.Module):
 # print(loss)
 
 
+"""
+最有结果：
+时间：0.00433
+损失值：0.8414
+"""
 # 测试运行时间
 # torch.manual_seed(666)
 # feature = torch.rand(100, 100)
