@@ -2,17 +2,12 @@
 监控参数梯度的变化
 """
 import torch
-from inspect import isgenerator
+
 
 class GradMonitor(object):
-    def __init__(self, parameters):
-        super().__init__()
-        assert isgenerator(parameters) or isinstance(parameters, list)
-        self.parameters = parameters
-
-    def __call__(self, ord=1):
+    def __call__(self, parameters, ord=1):
         grad_norm = []
-        for p in self.parameters:
+        for p in parameters:
             if p.requires_grad:
                 norm = p.grad.norm(ord)
                 grad_norm.append(norm)
