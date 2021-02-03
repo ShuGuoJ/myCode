@@ -54,5 +54,25 @@ class Trainer(object):
             losses.append(loss.item())
         return np.mean(losses), correct / len(data_loader.dataset)
 
+    # 获得分类结果
+    def infer(self, data, device: torch.device):
+        self.model.eval()
+        self.model.to(device)
+        ans = []
+        if isinstance(data, torch.Tensor):
+            x = data.to(device)
+            with torch.no_grad():
+                logits = self.model(x)
+            pred = logits.argmax(-1)
+            ans.append(pred)
+        else:
+            for x, _ in data:
+                x = x.to(device)
+                with torch.no_grad():
+                    logits = self.model(x)
+                pred = logits.argmax(-1)
+                ans.append(pred)
+        return torch.cat(ans, dim=0)
+
     def get_parameters(self):
         return self.model.parameters()
