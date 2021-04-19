@@ -23,4 +23,5 @@ The repository is used to store the basic code about deep learning and data prep
 7. `visualize.py` contains a function to facilitate us to visualize sample point.
 
 8. `Loss.pt` contains a contrastive loss.
+9. `绘图` directory contains plot experiment image about hyperspectral image classification tool. Different from `生成map`, it contains many finer tools to plot ground truth, full prediction map, feature visualization, and false-color image of hyperspectral image.
 ## Contribution
