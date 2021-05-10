@@ -4,42 +4,22 @@ from scipy.io import loadmat
 import numpy as np
 import argparse
 import os
-
-INFO = {'PaviaU': {'data_key': 'paviaU',
-                   'gt_key': 'paviaU_gt',
-                   'b_0': 430,
-                   'b_n': 860,
-                   'band': 103},
-        'Salinas': {'data_key': 'salinas_corrected',
-                    'gt_key': 'salinas_gt',
-                    'b_0': 200,
-                    'b_n': 2400,
-                    'band': 204},
-        'KSC': {'data_key': 'KSC',
-                'gt_key': 'KSC_gt',
-                'b_0': 400,
-                'b_n': 2500,
-                'band': 176},
-        'gf5': {'data_key': 'gf5',
-                'gt_key': 'gf5_gt',
-                'b_0': 400,
-                'b_n': 2500,
-                'band': 280}}
+import configparser
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='绘画高光谱图像的RGB图像')
-    parser.add_argument('--name', type=str, default='gf5',
+    parser.add_argument('--name', type=str, default='PaviaU',
                         help='DATASET NAME')
     arg = parser.parse_args()
+    config = configparser.ConfigParser()
+    config.read('dataInfo.ini')
     dataset_name = arg.name
-    info = INFO[dataset_name]
     m = loadmat('data/{0}/{0}.mat'.format(dataset_name))
-    data = m[info['data_key']]
-    # gt = gt.astype(np.int)
+    data = m[config.get(arg.name, 'data_key')]
     data = data.astype(np.float)
-    b_0 = info['b_0']
-    b_n = info['b_n']
-    n = info['band']
+    b_0 = config.getint(arg.name, 'band_begin')
+    b_n = config.getint(arg.name, 'band_end')
+    n = config.getint(arg.name, 'band')
     d = (b_n - b_0) / (n - 1)
     r, g, b = rgb(b_0 ,d)
     img = data[..., (r, g, b)]

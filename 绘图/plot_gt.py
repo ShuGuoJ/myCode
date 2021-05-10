@@ -4,19 +4,18 @@ from scipy.io import loadmat
 import numpy as np
 import glob
 from utils import plot_map
+import configparser
 
-INFO = {'PaviaU_gt': 'paviaU_gt',
-        'Salinas_gt': 'salinas_gt',
-        'KSC_gt': 'KSC_gt',
-        'gf5_gt': 'gf5_gt'}
 
 if __name__ == '__main__':
+    config = configparser.ConfigParser()
+    config.read('dataInfo.ini')
     path = glob.glob('gt\\*.mat')
-    # path = [p.split('\\')[-1] for p in path]
     for p in path:
         m = loadmat(p)
-        name = p.split('\\')[-1].split('.')[0]
-        gt = m[INFO[name]]
+        name = p.split('\\')[-1].split('.')[0].split('_')[0]
+        key = config.get(name, 'gt_key')
+        gt = m[key]
         h, w = gt.shape
         map = plot_map(gt)
         plt.figure(figsize=(w/100.0, h/100.0))

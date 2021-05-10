@@ -11,14 +11,15 @@ import argparse
 import os
 from scipy.io import loadmat
 from sklearn.preprocessing import scale
-INFO = {'PaviaU': {'data_key': 'paviaU',
-                   'gt_key': 'paviaU_gt'},
-        'Salinas': {'data_key': 'salinas_corrected',
-                    'gt_key': 'salinas_gt'},
-        'KSC': {'data_key': 'KSC',
-                'gt_key': 'KSC_gt'},
-        'gf5': {'data_key': 'gf5',
-                'gt_key': 'gf5_gt'}}
+import configparser
+# INFO = {'PaviaU': {'data_key': 'paviaU',
+#                    'gt_key': 'paviaU_gt'},
+#         'Salinas': {'data_key': 'salinas_corrected',
+#                     'gt_key': 'salinas_gt'},
+#         'KSC': {'data_key': 'KSC',
+#                 'gt_key': 'KSC_gt'},
+#         'gf5': {'data_key': 'gf5',
+#                 'gt_key': 'gf5_gt'}}
 
 
 # TSNE
@@ -60,10 +61,14 @@ if __name__ == '__main__':
     parser.add_argument('--name', type=str, default='PaviaU',
                         help='DATASET NAME')
     arg = parser.parse_args()
+    config = configparser.ConfigParser()
+    config.read('dataInfo.ini')
     root = arg.root
     dataset_name = arg.name
-    data_key = INFO[dataset_name]['data_key']
-    gt_key = INFO[dataset_name]['gt_key']
+    # data_key = INFO[dataset_name]['data_key']
+    # gt_key = INFO[dataset_name]['gt_key']
+    data_key = config.get(arg.name, 'data_key')
+    gt_key = config.get(arg.name, 'gt_key')
     # 读取数据
     data_path = '{0}/{1}/{1}.mat'.format(root, dataset_name)
     assert os.path.exists(data_path)
