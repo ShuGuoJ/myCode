@@ -12,3 +12,6 @@
 * rename.py `python rename.py --name xx（数据集名称）`
 * visualize.py `python visualize.py -- root xx（数据文件夹根目录） -- name xx（数据集名称）`
 * plot_rgb.py `python plot_rgb.py --name xx（数据集名称）`
+
+## 新修改
+通过使用外部配置文件dataInfo.ini来存储数据集的信息，然后再使用内置模块configparser来加载dataInfo.ini配置文件。这种方法能够提过数据集信息的可移植性，便于其它程序的使用。
