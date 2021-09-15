@@ -5,6 +5,7 @@ import numpy as np
 import torch
 import cv2 as cv
 from torch_scatter import scatter
+from torch_geometric.data import Data
 
 
 """
@@ -56,8 +57,94 @@ def get_node(x, segment, mode='mean'):
     return nodes.to(torch.float32)
 
 
-# x = np.arange(4).reshape((2,2,1))
-# print(x)
-# segment = np.array([[0, 0], [0, 1]])
-# print(get_node(x, segment))
+# 绘制网格数据中点的4领域关系
+# 双重for循环遍历图中每一个节点的4领域'
+# def get_grid_adj(grid):
+#     DETA = [[-1,0],[1,0],[0,-1],[0,1]]
+#     h, w = grid.shape
+#     edge_index = list()
+#     for i in range(h):
+#         for j in range(w):
+#             if grid[i, j] == -1:
+#                 continue
+#             for deta in DETA:
+#                 i_adj = i + deta[0]
+#                 j_adj = j + deta[1]
+#                 if 0 <= i_adj < h and 0 <= j_adj < w and grid[i_adj, j_adj] != -1:
+#                     edge_index.append((grid[i, j], grid[i_adj, j_adj]))
+#     return edge_index
+
+
+# 采用图像偏移的方法来构造图中每一个节点的4领域
+def get_grid_adj(grid):
+    edge_index = list()
+    # 上偏移
+    a = np.full_like(grid, -1, dtype=np.int32)
+    a[:-1] = grid[1:]
+    adj = np.stack([grid, a], axis=-1)
+    mask = adj != -1
+    mask = np.logical_and(mask[..., 0], mask[..., 1])
+    tmp = adj[mask]
+    tmp = tmp.tolist()
+    edge_index += tmp
+    # 下偏移
+    a = np.full_like(grid, -1, dtype=np.int32)
+    a[1:] = grid[:-1]
+    adj = np.stack([grid, a], axis=-1)
+    mask = adj != -1
+    mask = np.logical_and(mask[..., 0], mask[..., 1])
+    tmp = adj[mask]
+    tmp = tmp.tolist()
+    edge_index += tmp
+    # 左偏移
+    a = np.full_like(grid, -1, dtype=np.int32)
+    a[:, :-1] = grid[:, 1:]
+    adj = np.stack([grid, a], axis=-1)
+    mask = adj != -1
+    mask = np.logical_and(mask[..., 0], mask[..., 1])
+    tmp = adj[mask]
+    tmp = tmp.tolist()
+    edge_index += tmp
+    # 右偏移
+    a = np.full_like(grid, -1, dtype=np.int32)
+    a[:, 1:] = grid[:, :-1]
+    adj = np.stack([grid, a], axis=-1)
+    mask = adj != -1
+    mask = np.logical_and(mask[..., 0], mask[..., 1])
+    tmp = adj[mask]
+    tmp = tmp.tolist()
+    edge_index += tmp
+    return edge_index
+
+
+# 获取graph list
+def get_graph_list(data, seg):
+    graph_node_feature = []
+    graph_edge_index = []
+    for i in np.unique(seg):
+        # 获取节点特征
+        graph_node_feature.append(data[seg == i])
+        # 获取邻接信息
+        x, y = np.nonzero(seg == i)
+        n = len(x)
+        x_min, x_max = x.min(), x.max()
+        y_min, y_max = y.min(), y.max()
+        grid = np.full((x_max - x_min + 1, y_max - y_min + 1), -1, dtype=np.int32)
+        x_hat, y_hat = x - x_min, y - y_min
+        grid[x_hat, y_hat] = np.arange(n)
+        graph_edge_index.append(get_grid_adj(grid))
+    graph_list = []
+    # 数据变换
+    for node, edge_index in zip(graph_node_feature, graph_edge_index):
+        node = torch.tensor(node, dtype=torch.float)
+        edge_index = torch.tensor(edge_index, dtype=torch.long).T
+        graph_list.append(Data(node, edge_index=edge_index))
+    return graph_list
+
+
+# data = np.arange(12).reshape((4, 3, 1))
+# seg = [[0, 0, 2], [0, 1, 2], [1, 1, 2], [1, 2, 2]]
+# seg = np.array(seg)
+# print(get_graph_list(data, seg))
+
 

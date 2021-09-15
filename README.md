@@ -22,6 +22,7 @@ The repository is used to store the basic code about deep learning and data prep
 
 7. `visualize.py` contains a function to facilitate us to visualize sample point.
 
-8. `Loss.pt` contains a contrastive loss.
+8. `Loss.py` contains a contrastive loss.
 9. `绘图` directory contains plot experiment image about hyperspectral image classification tool. Different from `生成map`, it contains many finer tools to plot ground truth, full prediction map, feature visualization, and false-color image of hyperspectral image.
+10. `Summary.py` contains a reimplemented summary function in torchsummary module, which can calculate the number of trainable parameters in a neural network without any other parameters just according to an instance of an abstract class.
 ## Contribution
