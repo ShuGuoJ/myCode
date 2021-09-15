@@ -55,7 +55,7 @@ class Trainer(object):
         return np.mean(losses), correct / len(data_loader.dataset)
 
     # 获得分类结果
-    def infer(self, data, device: torch.device):
+    def predict(self, data, device: torch.device):
         self.model.eval()
         self.model.to(device)
         ans = []
@@ -76,3 +76,6 @@ class Trainer(object):
 
     def get_parameters(self):
         return self.model.parameters()
+
+    def save(self, path):
+        torch.save(self.model.cpu().state_dict(), path)
